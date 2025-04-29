@@ -9,15 +9,15 @@ import base64
 from mythic_container.MythicRPC import *
 
 
-class ServiceWrapper(PayloadType):
+class MSBuildWrapper(PayloadType):
 
-    name = "service_wrapper"
-    file_extension = "exe"
-    author = "@its_a_feature_"
+    name = "msbuild_wrapper"
+    file_extension = ""
+    author = "@croucherk"
     supported_os = [SupportedOS.Windows]
     wrapper = True
     wrapped_payloads = []
-    note = "This is a wrapper payload that takes in Raw shellcode and generates a .NET Service binary. The service does not perform any injection."
+    note = "This is a wrapper payload that takes in Raw shellcode and generates an input file that may be passed to MSBuild to execute arbitrary C# code. The payload does not perform any injection."
     supports_dynamic_loading = False
     build_parameters = [
         BuildParameter(
@@ -33,11 +33,18 @@ class ServiceWrapper(PayloadType):
             choices=["x64", "Any CPU"],
             default_value="x64",
             description="Target architecture",
+        ),
+        BuildParameter(
+            name="extension",
+            parameter_type=BuildParameterType.ChooseOne,
+            choices=["xml"],
+            default_value="xml",
+            description="File extension for the payload",
         )
     ]
     c2_profiles = []
-    agent_path = PurePath(".") / "service_wrapper"
-    agent_icon_path = agent_path / "service_wrapper.svg"
+    agent_path = PurePath(".") / "msbuild_wrapper"
+    agent_icon_path = agent_path / "msbuild_wrapper.svg"
     agent_code_path = agent_path / "agent_code"
     build_steps = [
         BuildStep(step_name="Gathering Files", step_description="Copying files to temp location"),
